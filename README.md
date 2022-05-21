@@ -6,3 +6,9 @@ This repository contains the python code to calculate the direction of magnetic 
 ```
 python MinTotEnergy.py
 ```
+### Dependencies
+* [numpy](https://numpy.org/)
+* [sympy](https://www.sympy.org/en/index.html)
+* [scipy](https://scipy.org/)
+* [pandas](https://pandas.pydata.org/)
+* [matplotlib](https://matplotlib.org/)
