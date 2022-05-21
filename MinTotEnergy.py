@@ -8,8 +8,9 @@ Created on Mon May  9 14:17:26 2022
 import numpy as np
 import sympy as sp
 from sympy.utilities.lambdify import lambdify
-from scipy.optimize import brute
+from scipy.optimize import brute,differential_evolution,dual_annealing
 import pandas as pd
+import matplotlib.pyplot as plt
 
 # specify the parameters
 # elastic modulus
@@ -48,8 +49,8 @@ ftot = ftot.subs({
     })
 
 # consider apply strain along [100]  and [01-1] direction
-e11vallist = np.arange(-0.01, 0.001, 0.0001)
-e22vallist = np.arange(-0.001, 0.0001, 0.00001)
+e11vallist = np.arange(-0.02, 0.005, 0.00005)
+e22vallist = np.asarray([0])
 # specify theta list
 thetalist = np.zeros((e11vallist.shape[0], e22vallist.shape[0]))
 # specify theta and phi range
@@ -70,12 +71,22 @@ for i in range(e11vallist.shape[0]):
             return lam_ftot(*tuple(x))
         
         # get results
-        result = brute(lam_ftot_v, ranges=bnds)
+        result = dual_annealing(lam_ftot_v, bnds)
         # append data to list
-        thetalist[i][j] = result[0]
-
-
+        thetalist[i][j] = result.x[0]
+        
 # change numpy data to data framework and save it in csv file
 df = pd.DataFrame(data=thetalist, index=e11vallist.astype(str), columns = e22vallist.astype(str)) 
 df.to_csv('thetalist.csv', index = True)
+
+plt.figure()
+plt.plot(e11vallist, thetalist)
+plt.xlabel('applied strain')
+plt.ylabel('Theta')
+plt.xlim([-0.015, 0.005])
+plt.ylim([0,90])
+
+
+
+
  
